@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const { readFile } = require('fs')
 const { promisify } = require('util')
 const path = require('path')
