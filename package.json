@@ -1,0 +1,20 @@
+{
+  "name": "firebase-config-sync",
+  "version": "0.1.0",
+  "description": "Synchronize Firebase Functions config variables with ease",
+  "main": "index.js",
+  "bin": {
+    "firebase-config-sync": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Mats Byrkjeand <mats.byrkjeland@entur.org>",
+  "license": "MIT",
+  "peerDependencies": {
+    "firebase-tools": "^6.0.0"
+  },
+  "dependencies": {
+    "commander": "^2.20.0"
+  }
+}
