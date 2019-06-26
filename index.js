@@ -34,7 +34,7 @@ function transformJsonConfigToFirebaseArgs(config) {
 
 async function set() {
     const configFiles = await getConfigFiles()
-    const argProjects = program.projects && program.projects.trim().split(',')
+    const argProjects = program.project && program.project.trim().split(',')
     const projects = Object.keys(configFiles).filter(p => !argProjects || argProjects.includes(p))
 
     projects.forEach(async project => {
