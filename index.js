@@ -34,7 +34,9 @@ function transformJsonConfigToFirebaseArgs(config) {
 
 async function set() {
     const configFiles = await getConfigFiles()
-    const projects = Object.keys(configFiles)
+    const argProjects = program.projects && program.projects.trim().split(',')
+    const projects = Object.keys(configFiles).filter(p => !argProjects || argProjects.includes(p))
+
     projects.forEach(async project => {
         const configFile = configFiles[project]
 
@@ -50,6 +52,7 @@ async function set() {
 
 program
     .option('-c, --config <path>', 'path to config file', '.firebaserc')
+    .option('-P, --project <names>', 'comma-separated list of project names to deploy to')
     .parse(process.argv);
 
 set()

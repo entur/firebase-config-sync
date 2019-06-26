@@ -80,8 +80,8 @@ firebase-config-sync
 
 #### Options
 ```
--c, --config <path>   Config file to find config files map in. Default: .firebaserc
--P, --projects        Whitelist of projects to set for      NOT IMPLEMENTED!
+-c, --config <path>     Config file to find config files map in. Default: .firebaserc
+-P, --project <names>   Comma-separated list of project names to deploy to
 ```
 
 ### Get
