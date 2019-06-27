@@ -1,18 +1,15 @@
 #!/usr/bin/env node
-const { readFile } = require('fs')
-const { promisify } = require('util')
 const path = require('path')
 const commander = require('commander');
 const firebase = require('firebase-tools');
 
-const read = promisify(readFile)
+const {
+    readJsonFile,
+    writeJsonFile,
+    transformJsonConfigToFirebaseArgs
+} = require('./util')
 
 const program = new commander.Command();
-
-async function readJsonFile(filePath) {
-    const buffer = await read(filePath)
-    return JSON.parse(buffer.toString())
-}
 
 async function getConfigFiles() {
     const { config } = program
@@ -26,16 +23,30 @@ async function getConfigFiles() {
     }
 }
 
-function transformJsonConfigToFirebaseArgs(config) {
-    return Object.keys(config)
-        .map(service => Object.keys(config[service]).map(varName => `${service}.${varName}=${config[service][varName]}`))
-        .reduce((a, b) => [...a, ...b])
+async function getProjects(configFiles) {
+    const argProjects = program.project && program.project.trim().split(',')
+    return Object.keys(configFiles).filter(p => !argProjects || argProjects.includes(p))
+}
+
+async function get() {
+    const configFiles = await getConfigFiles()
+    const projects = await getProjects(configFiles)
+
+    projects.forEach(async project => {
+        const configFile = configFiles[project]
+
+        console.log(`Downloading config to ${configFile} from ${project}`);
+
+        const conf = await firebase.functions.config.get(undefined, { project })
+        await writeJsonFile(configFile, conf)
+
+        console.log(`Done downloading config to ${configFile} from ${project}`);
+    })
 }
 
 async function set() {
     const configFiles = await getConfigFiles()
-    const argProjects = program.project && program.project.trim().split(',')
-    const projects = Object.keys(configFiles).filter(p => !argProjects || argProjects.includes(p))
+    const projects = await getProjects(configFiles)
 
     projects.forEach(async project => {
         const configFile = configFiles[project]
@@ -50,9 +61,21 @@ async function set() {
     })
 }
 
+let command
+
 program
+    .arguments('<cmd>')
     .option('-c, --config <path>', 'path to config file', '.firebaserc')
     .option('-P, --project <names>', 'comma-separated list of project names to deploy to')
+    .action(cmd => { command = cmd })
     .parse(process.argv);
 
-set()
+if (command === 'get') {
+    get()
+} else if (command === 'set') {
+    set()
+} else if (!command) {
+    console.error(`No command given. Please pass command "get" or "set".`)
+} else {
+    console.error(`Unrecognized command "${command}". Use "get" or "set".`)
+}
