@@ -19,7 +19,7 @@ The normal way of updating your config is setting variables one by one. See the 
 But with `firebase-config-sync` you can upload all your config at once, with the following command:
 
 ```
-firebase-config-sync
+firebase-config-sync set
 ```
 
 All you need is to configure which files go to which Firebase projects. Do this by adding a field `configFiles` in your `.firebaserc`:
@@ -75,16 +75,25 @@ And that's exactly what you'd want your config files to look like.
 Upload config from config files to their Firebase projects
 
 ```
-firebase-config-sync
+firebase-config-sync set
 ```
 
 #### Options
 ```
 -c, --config <path>     Config file to find config files map in. Default: .firebaserc
--P, --project <names>   Comma-separated list of project names to deploy to
+-P, --project <names>   Comma-separated list of project names to deploy to. Default is all projects.
 ```
 
 ### Get
 Download config from Firebase projects to their config files
 
-NOT IMPLEMENTED
+```
+firebase-config-sync get
+```
+
+#### Options
+```
+-c, --config <path>     Config file to find config files map in. Default: .firebaserc
+-P, --project <names>   Comma-separated list of project names to deploy to. Default is all projects.
+-i, --ignore            Don't save properties that don't already exist in local file
+```
