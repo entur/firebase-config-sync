@@ -18,6 +18,6 @@
     "commander": "^2.20.0"
   },
   "devDependencies": {
-    "firebase-tools": "^7.0.2"
+    "firebase-tools": "^6.0.0"
   }
 }
