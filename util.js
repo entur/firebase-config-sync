@@ -19,3 +19,21 @@ exports.transformJsonConfigToFirebaseArgs = function transformJsonConfigToFireba
         .map(service => Object.keys(config[service]).map(varName => `${service}.${varName}=${config[service][varName]}`))
         .reduce((a, b) => [...a, ...b])
 }
+
+exports.pickSameKeys = function pickSameKeys(someLargeObject, objectToResemble) {
+    return Object.keys(someLargeObject).reduce((newObject, key) => {
+        if (!objectToResemble.hasOwnProperty(key)) {
+            return newObject
+        }
+        if (typeof someLargeObject[key] === 'object') {
+            return {
+                ...newObject,
+                [key]: pickSameKeys(someLargeObject[key], objectToResemble[key]),
+            }
+        }
+        return {
+            ...newObject,
+            [key]: someLargeObject[key],
+        }
+    }, {})
+}

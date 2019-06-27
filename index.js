@@ -6,7 +6,8 @@ const firebase = require('firebase-tools');
 const {
     readJsonFile,
     writeJsonFile,
-    transformJsonConfigToFirebaseArgs
+    transformJsonConfigToFirebaseArgs,
+    pickSameKeys,
 } = require('./util')
 
 const program = new commander.Command();
@@ -37,8 +38,14 @@ async function get() {
 
         console.log(`Downloading config to ${configFile} from ${project}`);
 
-        const conf = await firebase.functions.config.get(undefined, { project })
-        await writeJsonFile(configFile, conf)
+        const remoteConfig = await firebase.functions.config.get(undefined, { project })
+
+        if (program.ignore) {
+            const existingConfig = await readJsonFile(configFile)
+            await writeJsonFile(configFile, pickSameKeys(remoteConfig, existingConfig))
+        } else {
+            await writeJsonFile(configFile, remoteConfig)
+        }
 
         console.log(`Done downloading config to ${configFile} from ${project}`);
     })
@@ -67,6 +74,7 @@ program
     .arguments('<cmd>')
     .option('-c, --config <path>', 'path to config file', '.firebaserc')
     .option('-P, --project <names>', 'comma-separated list of project names to deploy to')
+    .option('-i, --ignore', 'get: do not save config that is not already in env file')
     .action(cmd => { command = cmd })
     .parse(process.argv);
 
