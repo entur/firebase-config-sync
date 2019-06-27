@@ -11,7 +11,7 @@ exports.readJsonFile = async function readJsonFile(filePath) {
 
 exports.writeJsonFile = function writeJsonFile(filePath, jsonData) {
     const string = JSON.stringify(jsonData, undefined, 2)
-    return write(filePath, string)
+    return write(filePath, string + '\n')
 }
 
 exports.transformJsonConfigToFirebaseArgs = function transformJsonConfigToFirebaseArgs(config) {
