@@ -13,6 +13,14 @@ const {
 
 const program = new commander.Command();
 
+function logInfo(text) {
+    if (!program.quiet) console.log(text)
+}
+
+function logError(text) {
+    if (!program.quiet) console.error(text)
+}
+
 async function getConfigFiles() {
     const { config } = program
     const filePath = path.resolve(config)
@@ -21,7 +29,7 @@ async function getConfigFiles() {
         const configData = await readJsonFile(filePath)
         return configData.configFiles
     } catch (error) {
-        console.error('No config found. Please add "configFiles" to your .firebaserc')
+        logError('No config found. Please add "configFiles" to your .firebaserc')
     }
 }
 
@@ -37,7 +45,7 @@ async function get() {
     projects.forEach(async project => {
         const configFile = configFiles[project]
 
-        console.log(`Downloading config to ${configFile} from ${project}`);
+        logInfo(`Downloading config to ${configFile} from ${project}`);
 
         let config = await firebase.functions.config.get(undefined, { project })
 
@@ -52,7 +60,7 @@ async function get() {
 
         await writeJsonFile(configFile, config)
 
-        console.log(`Done downloading config to ${configFile} from ${project}`);
+        logInfo(`Done downloading config to ${configFile} from ${project}`);
     })
 }
 
@@ -63,13 +71,13 @@ async function set() {
     projects.forEach(async project => {
         const configFile = configFiles[project]
 
-        console.log(`Uploading config to ${project} from ${configFile}`);
+        logInfo(`Uploading config to ${project} from ${configFile}`);
 
         const config = await readJsonFile(configFile)
         const parsed = transformJsonConfigToFirebaseArgs(config)
         await firebase.functions.config.set(parsed, { project })
 
-        console.log(`Done uploading config to ${project} from ${configFile}`);
+        logInfo(`Done uploading config to ${project} from ${configFile}`);
     })
 }
 
@@ -79,6 +87,7 @@ program
     .arguments('<cmd>')
     .option('-c, --config <path>', 'path to config file', '.firebaserc')
     .option('-P, --project <names>', 'comma-separated list of project names to deploy to')
+    .option('-q, --quiet', 'disable all logging to console')
     .option('-i, --ignore', 'get: do not save config that is not already in env file')
     .option('-s, --sort', 'get: sort config alphabetically before saving to config file')
     .action(cmd => { command = cmd })
