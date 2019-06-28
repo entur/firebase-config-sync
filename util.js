@@ -37,3 +37,15 @@ exports.pickSameKeys = function pickSameKeys(someLargeObject, objectToResemble) 
         }
     }, {})
 }
+
+function isObject(object) {
+    return !!object && typeof object === 'object' && !Array.isArray(object)
+}
+
+exports.sortObject = function sortObject(object) {
+    if (!isObject(object)) return object
+    return Object.keys(object).sort().reduce((map, key) => ({
+        ...map,
+        [key]: sortObject(object[key]),
+    }), {})
+}

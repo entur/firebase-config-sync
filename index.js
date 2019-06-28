@@ -8,6 +8,7 @@ const {
     writeJsonFile,
     transformJsonConfigToFirebaseArgs,
     pickSameKeys,
+    sortObject,
 } = require('./util')
 
 const program = new commander.Command();
@@ -38,14 +39,18 @@ async function get() {
 
         console.log(`Downloading config to ${configFile} from ${project}`);
 
-        const remoteConfig = await firebase.functions.config.get(undefined, { project })
+        let config = await firebase.functions.config.get(undefined, { project })
 
         if (program.ignore) {
             const existingConfig = await readJsonFile(configFile)
-            await writeJsonFile(configFile, pickSameKeys(remoteConfig, existingConfig))
-        } else {
-            await writeJsonFile(configFile, remoteConfig)
+            config = pickSameKeys(config, existingConfig)
         }
+
+        if (program.sort) {
+            config = sortObject(config)
+        }
+
+        await writeJsonFile(configFile, config)
 
         console.log(`Done downloading config to ${configFile} from ${project}`);
     })
@@ -75,6 +80,7 @@ program
     .option('-c, --config <path>', 'path to config file', '.firebaserc')
     .option('-P, --project <names>', 'comma-separated list of project names to deploy to')
     .option('-i, --ignore', 'get: do not save config that is not already in env file')
+    .option('-s, --sort', 'get: sort config alphabetically before saving to config file')
     .action(cmd => { command = cmd })
     .parse(process.argv);
 
