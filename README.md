@@ -95,8 +95,9 @@ firebase-config-sync get
 #### Options
 ```
 -c, --config <path>     Config file to find config files map in. Default: .firebaserc
--P, --project <names>   Comma-separated list of project names to deploy to. Default is all projects.
+-P, --project <names>   Comma-separated list of project names to fetch for. Default is all projects.
 -q, --quiet             Disable all logging
 -i, --ignore            Don't save properties that don't already exist in local file
 -s, --sort              Sort config alphabetically before saving to config file
+-f, --file <path>       Custom file to save to, if you don't want to use the one specified in configFiles
 ```

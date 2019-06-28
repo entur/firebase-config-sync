@@ -43,7 +43,7 @@ async function get() {
     const projects = await getProjects(configFiles)
 
     projects.forEach(async project => {
-        const configFile = configFiles[project]
+        const configFile = program.file || configFiles[project]
 
         logInfo(`Downloading config to ${configFile} from ${project}`);
 
@@ -90,6 +90,7 @@ program
     .option('-q, --quiet', 'disable all logging to console')
     .option('-i, --ignore', 'get: do not save config that is not already in env file')
     .option('-s, --sort', 'get: sort config alphabetically before saving to config file')
+    .option('-f, --file <path>', 'get: custom file to save to, if you don\'t want to use the one specified in configFiles')
     .action(cmd => { command = cmd })
     .parse(process.argv);
 
