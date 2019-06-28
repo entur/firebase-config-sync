@@ -43,7 +43,9 @@ async function get() {
     const projects = await getProjects(configFiles)
 
     projects.forEach(async project => {
-        const configFile = program.file || configFiles[project]
+        const configFile = program.file
+            ? program.file.replace('{project}', project)
+            : configFiles[project]
 
         logInfo(`Downloading config to ${configFile} from ${project}`);
 
