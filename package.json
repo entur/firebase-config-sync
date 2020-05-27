@@ -1,6 +1,6 @@
 {
   "name": "firebase-config-sync",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Synchronize Firebase Functions config variables with ease",
   "main": "index.js",
   "bin": {
