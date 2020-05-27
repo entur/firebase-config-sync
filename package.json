@@ -12,12 +12,12 @@
   "author": "Mats Byrkjeand <mats.byrkjeland@entur.org>",
   "license": "MIT",
   "peerDependencies": {
-    "firebase-tools": "^7.0.0"
+    "firebase-tools": "^8.0.0"
   },
   "dependencies": {
     "commander": "^3.0.2"
   },
   "devDependencies": {
-    "firebase-tools": "^7.0.0"
+    "firebase-tools": "^8.0.0"
   }
 }
