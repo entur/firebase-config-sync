@@ -9,6 +9,7 @@ const {
     transformJsonConfigToFirebaseArgs,
     pickSameKeys,
     sortObject,
+    parseConfigValues,
 } = require('./util')
 
 const program = new commander.Command();
@@ -59,6 +60,8 @@ async function get() {
         if (program.sort) {
             config = sortObject(config)
         }
+
+        config = parseConfigValues(config)
 
         await writeJsonFile(configFile, config)
 

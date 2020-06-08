@@ -14,9 +14,34 @@ exports.writeJsonFile = function writeJsonFile(filePath, jsonData) {
     return write(filePath, string + '\n')
 }
 
+function mapObject(obj, mapper) {
+    if (!obj || typeof obj !== 'object') return obj
+    return Object.entries(obj).reduce((acc, [key, value]) => ({
+        ...acc,
+        [key]: mapper(value)
+    }), {})
+}
+
+exports.parseConfigValues = function parseConfigValues(config) {
+    return mapObject(
+        config,
+        (serviceConfig) => mapObject(serviceConfig, value => {
+            try {
+                return JSON.parse(value)
+            } catch (error) {
+                return value
+            }
+        })
+    )
+}
+
+function stringifyNonStrings(value) {
+    return (typeof value === 'string') ? value : JSON.stringify(value)
+}
+
 exports.transformJsonConfigToFirebaseArgs = function transformJsonConfigToFirebaseArgs(config) {
     return Object.keys(config)
-        .map(service => Object.keys(config[service]).map(varName => `${service}.${varName}=${config[service][varName]}`))
+        .map(service => Object.keys(config[service]).map(varName => `${service}.${varName}=${stringifyNonStrings(config[service][varName])}`))
         .reduce((a, b) => [...a, ...b])
 }
 
