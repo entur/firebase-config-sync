@@ -24,7 +24,7 @@ firebase-config-sync set
 
 All you need is to configure which files go to which Firebase projects. Do this by adding a field `configFiles` in your `.firebaserc`:
 
-```
+```diff
 // .firebaserc
 {
   "projects": {
@@ -32,11 +32,11 @@ All you need is to configure which files go to which Firebase projects. Do this 
     "staging": "awesomeproject-staging",
     "dev": "awesomeproject-dev"
   },
-  "configFiles": {
-    "prod": ".env.prod.json",
-    "staging": ".env.staging.json",
-    "dev": ".env.dev.json"
-  }
++  "configFiles": {
++    "prod": ".env.prod.json",
++    "staging": ".env.staging.json",
++    "dev": ".env.dev.json"
++  }
 }
 ```
 
