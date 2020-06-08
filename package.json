@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Mats Byrkjeand <mats.byrkjeland@entur.org>",
+  "author": "Entur AS",
   "license": "MIT",
   "peerDependencies": {
     "firebase-tools": "^8.0.0"
