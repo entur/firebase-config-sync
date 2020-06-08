@@ -16,44 +16,61 @@ exports.writeJsonFile = function writeJsonFile(filePath, jsonData) {
 
 function mapObject(obj, mapper) {
     if (!obj || typeof obj !== 'object') return obj
-    return Object.entries(obj).reduce((acc, [key, value]) => ({
-        ...acc,
-        [key]: mapper(value)
-    }), {})
+    return Object.entries(obj).reduce(
+        (acc, [key, value]) => ({
+            ...acc,
+            [key]: mapper(value),
+        }),
+        {},
+    )
 }
 
 exports.parseConfigValues = function parseConfigValues(config) {
-    return mapObject(
-        config,
-        (serviceConfig) => mapObject(serviceConfig, value => {
+    return mapObject(config, (serviceConfig) =>
+        mapObject(serviceConfig, (value) => {
             try {
                 return JSON.parse(value)
             } catch (error) {
                 return value
             }
-        })
+        }),
     )
 }
 
 function stringifyNonStrings(value) {
-    return (typeof value === 'string') ? value : JSON.stringify(value)
+    return typeof value === 'string' ? value : JSON.stringify(value)
 }
 
-exports.transformJsonConfigToFirebaseArgs = function transformJsonConfigToFirebaseArgs(config) {
+exports.transformJsonConfigToFirebaseArgs = function transformJsonConfigToFirebaseArgs(
+    config,
+) {
     return Object.keys(config)
-        .map(service => Object.keys(config[service]).map(varName => `${service}.${varName}=${stringifyNonStrings(config[service][varName])}`))
+        .map((service) =>
+            Object.keys(config[service]).map(
+                (varName) =>
+                    `${service}.${varName}=${stringifyNonStrings(
+                        config[service][varName],
+                    )}`,
+            ),
+        )
         .reduce((a, b) => [...a, ...b])
 }
 
-exports.pickSameKeys = function pickSameKeys(someLargeObject, objectToResemble) {
+exports.pickSameKeys = function pickSameKeys(
+    someLargeObject,
+    objectToResemble,
+) {
     return Object.keys(someLargeObject).reduce((newObject, key) => {
-        if (!objectToResemble.hasOwnProperty(key)) {
+        if (!Object.prototype.hasOwnProperty.call(objectToResemble, key)) {
             return newObject
         }
         if (typeof someLargeObject[key] === 'object') {
             return {
                 ...newObject,
-                [key]: pickSameKeys(someLargeObject[key], objectToResemble[key]),
+                [key]: pickSameKeys(
+                    someLargeObject[key],
+                    objectToResemble[key],
+                ),
             }
         }
         return {
@@ -69,8 +86,13 @@ function isObject(object) {
 
 exports.sortObject = function sortObject(object) {
     if (!isObject(object)) return object
-    return Object.keys(object).sort().reduce((map, key) => ({
-        ...map,
-        [key]: sortObject(object[key]),
-    }), {})
+    return Object.keys(object)
+        .sort()
+        .reduce(
+            (map, key) => ({
+                ...map,
+                [key]: sortObject(object[key]),
+            }),
+            {},
+        )
 }
