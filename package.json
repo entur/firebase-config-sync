@@ -7,7 +7,11 @@
     "firebase-config-sync": "index.js"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "eslint ."
+  },
+  "engines": {
+    "node": ">=10"
   },
   "author": "Mats Byrkjeand <mats.byrkjeland@entur.org>",
   "license": "MIT",
@@ -18,6 +22,10 @@
     "commander": "^5.1.0"
   },
   "devDependencies": {
-    "firebase-tools": "^8.0.0"
+    "eslint": "^7.2.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "firebase-tools": "^8.0.0",
+    "prettier": "^2.0.5"
   }
 }
