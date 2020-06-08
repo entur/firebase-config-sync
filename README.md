@@ -1,6 +1,6 @@
 # firebase-config-sync
 
-Synchronize Firebase Functions config variables with ease. Keep your config checked in to source control!
+Synchronize Firebase Functions config variables with ease from local config (.env) files.
 
 ```
 npm install --dev firebase-config-sync
@@ -47,7 +47,7 @@ The keys in `configFiles` should equal those in `projects`. `firebase-config-syn
 Normally when setting a config variable, you do it like this:
 
 ```
-firebase functions:config:set someservice.key="THE API KEY" someservice.id="THE CLIENT ID"
+firebase functions:config:set some_service.key="THE API KEY" someservice.id="THE CLIENT ID"
 ```
 
 You can retrieve the config with this command:
@@ -60,14 +60,26 @@ It should return something that looks like this:
 
 ```
 {
-  "someservice": {
+  "some_service": {
     "key":"THE API KEY",
     "id":"THE CLIENT ID"
   }
 }
 ```
 
-And that's exactly what you'd want your config files to look like.
+And that's what you'd want your config files to look like. But wait, there's more! `firebase-config-sync` will stringify the values (if they're not already strings), and parse them when downloaded. This allows you to use more complex types like booleans, arrays and objects in your config files:
+
+```
+{
+  "some_service": {
+    "some_list_of_cheeses": [
+      "camembert",
+      "brie",
+      "jarlsberg"
+    ]
+  }
+}
+```
 
 ## API
 
