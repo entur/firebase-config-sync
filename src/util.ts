@@ -1,20 +1,28 @@
-const { readFile, writeFile } = require('fs')
-const { promisify } = require('util')
+import { readFile, writeFile } from 'fs'
+import { promisify } from 'util'
+
+import { ConfigFileLocal, ConfigFileRemote } from './interfaces'
 
 const read = promisify(readFile)
 const write = promisify(writeFile)
 
-exports.readJsonFile = async function readJsonFile(filePath) {
+export async function readJsonFile<T>(filePath: string): Promise<T> {
     const buffer = await read(filePath)
     return JSON.parse(buffer.toString())
 }
 
-exports.writeJsonFile = function writeJsonFile(filePath, jsonData) {
+export function writeJsonFile(
+    filePath: string,
+    jsonData: { [key: string]: unknown },
+): Promise<void> {
     const string = JSON.stringify(jsonData, undefined, 2)
     return write(filePath, string + '\n')
 }
 
-function mapObject(obj, mapper) {
+function mapObject<T, V>(
+    obj: { [key: string]: T },
+    mapper: (val: T) => V,
+): { [key: string]: V } {
     if (!obj || typeof obj !== 'object') return obj
     return Object.entries(obj).reduce(
         (acc, [key, value]) => ({
@@ -25,7 +33,7 @@ function mapObject(obj, mapper) {
     )
 }
 
-exports.parseConfigValues = function parseConfigValues(config) {
+export function parseConfigValues(config: ConfigFileRemote): ConfigFileLocal {
     return mapObject(config, (serviceConfig) =>
         mapObject(serviceConfig, (value) => {
             try {
@@ -37,13 +45,13 @@ exports.parseConfigValues = function parseConfigValues(config) {
     )
 }
 
-function stringifyNonStrings(value) {
+function stringifyNonStrings(value: unknown): string {
     return typeof value === 'string' ? value : JSON.stringify(value)
 }
 
-exports.transformJsonConfigToFirebaseArgs = function transformJsonConfigToFirebaseArgs(
-    config,
-) {
+export function transformJsonConfigToFirebaseArgs(
+    config: ConfigFileLocal,
+): string[] {
     return Object.keys(config)
         .map((service) =>
             Object.keys(config[service]).map(
@@ -56,10 +64,10 @@ exports.transformJsonConfigToFirebaseArgs = function transformJsonConfigToFireba
         .reduce((a, b) => [...a, ...b])
 }
 
-exports.pickSameKeys = function pickSameKeys(
-    someLargeObject,
-    objectToResemble,
-) {
+export function pickSameKeys(
+    someLargeObject: { [key: string]: any },
+    objectToResemble: { [key: string]: any },
+): { [key: string]: any } {
     return Object.keys(someLargeObject).reduce((newObject, key) => {
         if (!Object.prototype.hasOwnProperty.call(objectToResemble, key)) {
             return newObject
@@ -80,11 +88,13 @@ exports.pickSameKeys = function pickSameKeys(
     }, {})
 }
 
-function isObject(object) {
-    return !!object && typeof object === 'object' && !Array.isArray(object)
+function isObject(obj: { [key: string]: any }): boolean {
+    return !!obj && typeof obj === 'object' && !Array.isArray(obj)
 }
 
-exports.sortObject = function sortObject(object) {
+export function sortObject(object: {
+    [key: string]: any
+}): { [key: string]: any } {
     if (!isObject(object)) return object
     return Object.keys(object)
         .sort()

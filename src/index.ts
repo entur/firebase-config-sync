@@ -1,42 +1,47 @@
 #!/usr/bin/env node
-const path = require('path')
-const commander = require('commander')
-const firebase = require('firebase-tools')
+import path from 'path'
+import commander from 'commander'
+import firebase from 'firebase-tools'
 
-const {
+import {
     readJsonFile,
     writeJsonFile,
     transformJsonConfigToFirebaseArgs,
     pickSameKeys,
     sortObject,
     parseConfigValues,
-} = require('./util')
+} from './util'
+
+import { ConfigFileLocal, ConfigFileRemote } from './interfaces'
 
 const program = new commander.Command()
 
-function logInfo(text) {
+function logInfo(text: string): void {
     if (!program.quiet) console.log(text)
 }
 
-function logError(text) {
+function logError(text: string): void {
     if (!program.quiet) console.error(text)
 }
 
-async function getConfigFiles() {
+async function getConfigFiles(): Promise<{ [project: string]: string }> {
     const { config } = program
     const filePath = path.resolve(config)
 
     try {
-        const configData = await readJsonFile(filePath)
+        const configData = await readJsonFile<{
+            configFiles: { [project: string]: string }
+        }>(filePath)
         return configData.configFiles
     } catch (error) {
         logError(
             'No config found. Please add "configFiles" to your .firebaserc',
         )
+        return {}
     }
 }
 
-async function getProjects(configFiles) {
+async function getProjects(configFiles: { [key: string]: unknown }) {
     const argProjects = program.project && program.project.trim().split(',')
     return Object.keys(configFiles).filter(
         (p) => !argProjects || argProjects.includes(p),
@@ -54,10 +59,15 @@ async function get() {
 
         logInfo(`Downloading config to ${configFile} from ${project}`)
 
-        let config = await firebase.functions.config.get(undefined, { project })
+        let config: ConfigFileRemote = await firebase.functions.config.get(
+            undefined,
+            { project },
+        )
 
         if (program.ignore) {
-            const existingConfig = await readJsonFile(configFile)
+            const existingConfig = await readJsonFile<ConfigFileLocal>(
+                configFile,
+            )
             config = pickSameKeys(config, existingConfig)
         }
 
@@ -65,9 +75,9 @@ async function get() {
             config = sortObject(config)
         }
 
-        config = parseConfigValues(config)
+        const localConfig: ConfigFileLocal = parseConfigValues(config)
 
-        await writeJsonFile(configFile, config)
+        await writeJsonFile(configFile, localConfig)
 
         logInfo(`Done downloading config to ${configFile} from ${project}`)
     })
@@ -82,7 +92,7 @@ async function set() {
 
         logInfo(`Uploading config to ${project} from ${configFile}`)
 
-        const config = await readJsonFile(configFile)
+        const config = await readJsonFile<ConfigFileLocal>(configFile)
         const parsed = transformJsonConfigToFirebaseArgs(config)
         await firebase.functions.config.set(parsed, { project })
 

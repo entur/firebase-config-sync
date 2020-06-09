@@ -2,17 +2,21 @@
   "name": "firebase-config-sync",
   "version": "0.8.0",
   "description": "Synchronize Firebase Functions config variables with ease",
-  "main": "index.js",
+  "main": "dist/index.js",
   "bin": {
-    "firebase-config-sync": "index.js"
+    "firebase-config-sync": "dist/index.js"
   },
   "scripts": {
-    "start": "node index.js",
-    "lint": "eslint ."
+    "start": "node src/index.js",
+    "build": "tsc",
+    "lint": "eslint src"
   },
   "engines": {
     "node": ">=10"
   },
+  "files": [
+    "dist"
+  ],
   "author": "Entur AS",
   "license": "MIT",
   "peerDependencies": {
@@ -22,10 +26,13 @@
     "commander": "^5.1.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.1.0",
+    "@typescript-eslint/parser": "^3.1.0",
     "eslint": "^7.2.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.3",
     "firebase-tools": "^8.0.0",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.5"
   }
 }
