@@ -6,6 +6,6 @@ export interface ConfigFileRemote {
 
 export interface ConfigFileLocal {
     [service: string]: {
-        [varName: string]: any
+        [varName: string]: unknown
     }
 }

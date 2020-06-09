@@ -41,7 +41,7 @@ async function getConfigFiles(): Promise<{ [project: string]: string }> {
     }
 }
 
-async function getProjects(configFiles: { [key: string]: any }) {
+async function getProjects(configFiles: { [key: string]: unknown }) {
     const argProjects = program.project && program.project.trim().split(',')
     return Object.keys(configFiles).filter(
         (p) => !argProjects || argProjects.includes(p),
@@ -75,9 +75,9 @@ async function get() {
             config = sortObject(config)
         }
 
-        config = parseConfigValues(config)
+        const localConfig: ConfigFileLocal = parseConfigValues(config)
 
-        await writeJsonFile(configFile, config)
+        await writeJsonFile(configFile, localConfig)
 
         logInfo(`Done downloading config to ${configFile} from ${project}`)
     })

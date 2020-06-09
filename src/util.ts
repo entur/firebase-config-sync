@@ -13,7 +13,7 @@ export async function readJsonFile<T>(filePath: string): Promise<T> {
 
 export function writeJsonFile(
     filePath: string,
-    jsonData: { [key: string]: any },
+    jsonData: { [key: string]: unknown },
 ): Promise<void> {
     const string = JSON.stringify(jsonData, undefined, 2)
     return write(filePath, string + '\n')
@@ -45,7 +45,7 @@ export function parseConfigValues(config: ConfigFileRemote): ConfigFileLocal {
     )
 }
 
-function stringifyNonStrings(value: any): string {
+function stringifyNonStrings(value: unknown): string {
     return typeof value === 'string' ? value : JSON.stringify(value)
 }
 
