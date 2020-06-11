@@ -111,5 +111,6 @@ firebase-config-sync get
 -q, --quiet             Disable all logging
 -i, --ignore            Don't save properties that don't already exist in local file
 -s, --sort              Sort config alphabetically before saving to config file
+-n, --no-parsing        Do not parse config values before saving to file
 -f, --file <path>       Custom file to save to, if you don't want to use the one specified in configFiles
 ```

@@ -75,7 +75,9 @@ async function get() {
             config = sortObject(config)
         }
 
-        const localConfig: ConfigFileLocal = parseConfigValues(config)
+        const localConfig: ConfigFileLocal = program.parsing
+            ? parseConfigValues(config)
+            : config
 
         await writeJsonFile(configFile, localConfig)
 
@@ -121,6 +123,10 @@ program
     .option(
         '-f, --file <path>',
         "get: custom file to save to, if you don't want to use the one specified in configFiles",
+    )
+    .option(
+        '-n, --no-parsing',
+        'get: do not parse config values before saving to file',
     )
     .action((cmd) => {
         command = cmd
