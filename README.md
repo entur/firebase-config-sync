@@ -90,13 +90,6 @@ Upload config from config files to their Firebase projects
 firebase-config-sync set
 ```
 
-#### Options
-```
--c, --config <path>     Config file to find config files map in. Default: .firebaserc
--P, --project <names>   Comma-separated list of project names to deploy to. Default is all projects.
--q, --quiet             Disable all logging
-```
-
 ### Get
 Download config from Firebase projects to their config files
 
