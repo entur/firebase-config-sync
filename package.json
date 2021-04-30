@@ -24,16 +24,16 @@
     "firebase-tools": "^8.0.0"
   },
   "dependencies": {
-    "commander": "^6.1.0"
+    "commander": "^6.2.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.1.1",
-    "@typescript-eslint/parser": "^4.1.1",
-    "eslint": "^7.9.0",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.25.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "firebase-tools": "^8.10.0",
-    "prettier": "^2.1.2",
-    "typescript": "^4.0.2"
+    "eslint-plugin-prettier": "^3.4.0",
+    "firebase-tools": "^8.20.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.4"
   }
 }
