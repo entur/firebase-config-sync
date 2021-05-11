@@ -92,9 +92,9 @@ function isObject(obj: { [key: string]: any }): boolean {
     return !!obj && typeof obj === 'object' && !Array.isArray(obj)
 }
 
-export function sortObject(object: {
+export function sortObject(object: { [key: string]: any }): {
     [key: string]: any
-}): { [key: string]: any } {
+} {
     if (!isObject(object)) return object
     return Object.keys(object)
         .sort()
