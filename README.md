@@ -95,6 +95,7 @@ firebase-config-sync set
 -c, --config <path>     Config file to find config files map in. Default: .firebaserc
 -P, --project <names>   Comma-separated list of project names to deploy to. Default is all projects.
 -q, --quiet             Disable all logging
+-f, --file <path>       Custom file to use instead of those in the config file. Must be used together with --project with a single argument.
 ```
 
 ### Get
