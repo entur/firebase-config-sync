@@ -86,7 +86,23 @@ async function get() {
 }
 
 async function set() {
-    const configFiles = await getConfigFiles()
+    let configFiles: { [project: string]: string }
+
+    if (program.file) {
+        if (!program.project) {
+            logError(
+                'File option can only be used together with project option',
+            )
+            return
+        }
+
+        configFiles = {
+            [program.project]: program.file,
+        }
+    } else {
+        configFiles = await getConfigFiles()
+    }
+
     const projects = await getProjects(configFiles)
 
     projects.forEach(async (project) => {
@@ -123,6 +139,10 @@ program
     .option(
         '-f, --file <path>',
         "get: custom file to save to, if you don't want to use the one specified in configFiles",
+    )
+    .option(
+        '-f, --file <path>',
+        'set: custom file to upload. Must be used together with --project with a single argument.',
     )
     .option(
         '-n, --no-parsing',
