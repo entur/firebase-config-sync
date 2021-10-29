@@ -139,6 +139,10 @@ program
         "get: custom file to save to, if you don't want to use the one specified in configFiles",
     )
     .option(
+        '-f, --file <path>',
+        "set: custom file to upload. Must be used together with --project with a single argument.",
+    )
+    .option(
         '-n, --no-parsing',
         'get: do not parse config values before saving to file',
     )
