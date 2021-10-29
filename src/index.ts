@@ -86,7 +86,16 @@ async function get() {
 }
 
 async function set() {
-    const configFiles = await getConfigFiles()
+    let configFiles: { [project: string]: string }
+
+    if (program.file && program.project) {
+        configFiles = {
+            [program.project]: program.file
+        }
+    } else {
+        configFiles = await getConfigFiles()
+    }
+
     const projects = await getProjects(configFiles)
 
     projects.forEach(async (project) => {
