@@ -90,12 +90,14 @@ async function set() {
 
     if (program.file) {
         if (!program.project) {
-            logError('File option can only be used together with project option')
+            logError(
+                'File option can only be used together with project option',
+            )
             return
         }
 
         configFiles = {
-            [program.project]: program.file
+            [program.project]: program.file,
         }
     } else {
         configFiles = await getConfigFiles()
@@ -140,7 +142,7 @@ program
     )
     .option(
         '-f, --file <path>',
-        "set: custom file to upload. Must be used together with --project with a single argument.",
+        'set: custom file to upload. Must be used together with --project with a single argument.',
     )
     .option(
         '-n, --no-parsing',
