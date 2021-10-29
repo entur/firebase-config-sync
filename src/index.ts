@@ -88,7 +88,12 @@ async function get() {
 async function set() {
     let configFiles: { [project: string]: string }
 
-    if (program.file && program.project) {
+    if (program.file) {
+        if (!program.project) {
+            logError('File option can only be used together with project option')
+            return
+        }
+
         configFiles = {
             [program.project]: program.file
         }
