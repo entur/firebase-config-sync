@@ -7,7 +7,7 @@
     "firebase-config-sync": "dist/index.js"
   },
   "scripts": {
-    "start": "node src/index.js",
+    "start": "ts-node src/index.ts",
     "build": "tsc",
     "lint": "eslint src",
     "prepublish": "npm run build"
@@ -31,6 +31,7 @@
     "commander": "^6.2.1"
   },
   "devDependencies": {
+    "@types/node": "^18.7.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
