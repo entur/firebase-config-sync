@@ -88,6 +88,70 @@ export function pickSameKeys(
     }, {})
 }
 
+export function pickMissingKeys(
+    root: string,
+    deployedObject: { [key: string]: any },
+    localObject: { [key: string]: any },
+): { [key: string]: any } {
+    return Object.keys(deployedObject).reduce((newObject, key) => {
+        if (!Object.prototype.hasOwnProperty.call(localObject, key)) {
+            // whole sub object can be removed
+            console.log(`${root}.${key}`)
+            return {
+                ...newObject,
+                [key]: deployedObject[key],
+            }
+        } else {
+            // object exists but we need to see if any sub keys should be removed
+            if (typeof deployedObject[key] === 'object') {
+                const missingChildKeys = pickMissingKeys(
+                    `${root}.${key}`,
+                    deployedObject[key],
+                    localObject[key],
+                )
+
+                if (Object.keys(missingChildKeys).length > 0) {
+                    return {
+                        ...newObject,
+                        [key]: missingChildKeys,
+                    }
+                }
+            }
+        }
+
+        return newObject
+    }, {})
+}
+
+export function pickMissingKeyPaths(
+    root: string,
+    deployedObject: { [key: string]: any },
+    localObject: { [key: string]: any },
+): string[] {
+    return Object.keys(deployedObject).reduce((paths: string[], key) => {
+        const path = `${root}${root !== '' ? '.' : ''}${key}`
+        if (!Object.prototype.hasOwnProperty.call(localObject, key)) {
+            // whole sub object can be removed
+            return [...paths, path]
+        } else {
+            // object exists but we need to see if any sub keys should be removed
+            if (typeof deployedObject[key] === 'object') {
+                const missingChildKeys = pickMissingKeyPaths(
+                    path,
+                    deployedObject[key],
+                    localObject[key],
+                )
+
+                if (Object.keys(missingChildKeys).length > 0) {
+                    return [...paths, ...missingChildKeys]
+                }
+            }
+        }
+
+        return paths
+    }, [])
+}
+
 function isObject(obj: { [key: string]: any }): boolean {
     return !!obj && typeof obj === 'object' && !Array.isArray(obj)
 }

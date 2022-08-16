@@ -10,14 +10,15 @@ import {
     pickSameKeys,
     sortObject,
     parseConfigValues,
+    pickMissingKeyPaths,
 } from './util'
 
 import { ConfigFileLocal, ConfigFileRemote } from './interfaces'
 
 const program = new commander.Command()
 
-function logInfo(text: string): void {
-    if (!program.quiet) console.log(text)
+function logInfo(text: string, ...rest: any[]): void {
+    if (!program.quiet) console.log(text, ...rest)
 }
 
 function logError(text: string): void {
@@ -48,11 +49,52 @@ async function getProjects(configFiles: { [key: string]: unknown }) {
     )
 }
 
+// Removes all config in firebase that is not found in .env files.
+async function purge() {
+    const configFiles = await getConfigFiles()
+    const projects = await getProjects(configFiles)
+
+    for (const project of projects) {
+        const configFile = program.file
+            ? program.file.replace('{project}', project)
+            : configFiles[project]
+
+        logInfo(`Downloading config to ${configFile} from ${project}`)
+
+        const deployedConfig: ConfigFileRemote =
+            await firebase.functions.config.get(undefined, { project })
+
+        const localConfig = await readJsonFile<ConfigFileLocal>(configFile)
+        const pathsOnlyInDeployed = pickMissingKeyPaths(
+            '',
+            deployedConfig,
+            localConfig,
+        )
+
+        if (pathsOnlyInDeployed.length > 0) {
+            logInfo(
+                `Removing ${pathsOnlyInDeployed.length} entries from ${project}`,
+                pathsOnlyInDeployed,
+            )
+
+            await firebase.functions.config.unset(pathsOnlyInDeployed, {
+                project,
+            })
+
+            logInfo(
+                `Done purging config, removed entries not found in .env file from ${project}`,
+            )
+        } else {
+            logInfo(`No config entries to remove from ${project}`)
+        }
+    }
+}
+
 async function get() {
     const configFiles = await getConfigFiles()
     const projects = await getProjects(configFiles)
 
-    projects.forEach(async (project) => {
+    for (const project of projects) {
         const configFile = program.file
             ? program.file.replace('{project}', project)
             : configFiles[project]
@@ -82,7 +124,7 @@ async function get() {
         await writeJsonFile(configFile, localConfig)
 
         logInfo(`Done downloading config to ${configFile} from ${project}`)
-    })
+    }
 }
 
 async function set() {
@@ -105,7 +147,7 @@ async function set() {
 
     const projects = await getProjects(configFiles)
 
-    projects.forEach(async (project) => {
+    for (const project of projects) {
         const configFile = configFiles[project]
 
         logInfo(`Uploading config to ${project} from ${configFile}`)
@@ -115,7 +157,7 @@ async function set() {
         await firebase.functions.config.set(parsed, { project })
 
         logInfo(`Done uploading config to ${project} from ${configFile}`)
-    })
+    }
 }
 
 let command
@@ -157,6 +199,8 @@ if (command === 'get') {
     get()
 } else if (command === 'set') {
     set()
+} else if (command === 'purge') {
+    purge()
 } else if (!command) {
     console.error(`No command given. Please pass command "get" or "set".`)
 } else {

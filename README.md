@@ -114,4 +114,17 @@ firebase-config-sync get
 -s, --sort              Sort config alphabetically before saving to config file
 -n, --no-parsing        Do not parse config values before saving to file
 -f, --file <path>       Custom file to save to, if you don't want to use the one specified in configFiles
+
+### Purge
+Purge config entries not found in config files from Firebase projects. 
+
+```
+firebase-config-sync purge
+```
+
+#### Options
+```
+-c, --config <path>     Config file to find config files map in. Default: .firebaserc
+-P, --project <names>   Comma-separated list of project names to fetch for. Default is all projects.
+-q, --quiet             Disable all logging
 ```
