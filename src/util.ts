@@ -88,41 +88,6 @@ export function pickSameKeys(
     }, {})
 }
 
-export function pickMissingKeys(
-    root: string,
-    deployedObject: { [key: string]: any },
-    localObject: { [key: string]: any },
-): { [key: string]: any } {
-    return Object.keys(deployedObject).reduce((newObject, key) => {
-        if (!Object.prototype.hasOwnProperty.call(localObject, key)) {
-            // whole sub object can be removed
-            console.log(`${root}.${key}`)
-            return {
-                ...newObject,
-                [key]: deployedObject[key],
-            }
-        } else {
-            // object exists but we need to see if any sub keys should be removed
-            if (typeof deployedObject[key] === 'object') {
-                const missingChildKeys = pickMissingKeys(
-                    `${root}.${key}`,
-                    deployedObject[key],
-                    localObject[key],
-                )
-
-                if (Object.keys(missingChildKeys).length > 0) {
-                    return {
-                        ...newObject,
-                        [key]: missingChildKeys,
-                    }
-                }
-            }
-        }
-
-        return newObject
-    }, {})
-}
-
 export function pickMissingKeyPaths(
     root: string,
     deployedObject: { [key: string]: any },
