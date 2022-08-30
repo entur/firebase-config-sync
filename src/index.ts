@@ -202,7 +202,11 @@ if (command === 'get') {
 } else if (command === 'purge') {
     purge()
 } else if (!command) {
-    console.error(`No command given. Please pass command "get" or "set".`)
+    console.error(
+        `No command given. Please pass command "get", "set" or "purge".`,
+    )
 } else {
-    console.error(`Unrecognized command "${command}". Use "get" or "set".`)
+    console.error(
+        `Unrecognized command "${command}". Use "get", "set" or "purge".`,
+    )
 }
