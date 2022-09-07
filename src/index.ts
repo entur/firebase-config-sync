@@ -104,7 +104,10 @@ async function get() {
         let config: ConfigFileRemote = await firebase.functions.config.get(
             undefined,
             { project },
-        )
+        ).catch(error){
+                console.error(error);
+        return {}
+        }
 
         if (program.ignore) {
             const existingConfig = await readJsonFile<ConfigFileLocal>(
